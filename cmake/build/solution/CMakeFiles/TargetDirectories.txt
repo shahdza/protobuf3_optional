@@ -1,0 +1,8 @@
+D:/MyProject/protobuf/protobuf-3.6.0/cmake/build/solution/CMakeFiles/protoc.dir
+D:/MyProject/protobuf/protobuf-3.6.0/cmake/build/solution/CMakeFiles/libprotobuf-lite.dir
+D:/MyProject/protobuf/protobuf-3.6.0/cmake/build/solution/CMakeFiles/libprotoc.dir
+D:/MyProject/protobuf/protobuf-3.6.0/cmake/build/solution/CMakeFiles/libprotobuf.dir
+D:/MyProject/protobuf/protobuf-3.6.0/cmake/build/solution/CMakeFiles/INSTALL.dir
+D:/MyProject/protobuf/protobuf-3.6.0/cmake/build/solution/CMakeFiles/js_embed.dir
+D:/MyProject/protobuf/protobuf-3.6.0/cmake/build/solution/CMakeFiles/ALL_BUILD.dir
+D:/MyProject/protobuf/protobuf-3.6.0/cmake/build/solution/CMakeFiles/ZERO_CHECK.dir
