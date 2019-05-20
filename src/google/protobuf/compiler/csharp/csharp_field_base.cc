@@ -83,10 +83,14 @@ void FieldGeneratorBase::SetCommonFieldVariables(
   }
   (*variables)["capitalized_type_name"] = capitalized_type_name();
   (*variables)["number"] = number();
-  (*variables)["has_property_check"] =
-    (*variables)["property_name"] + " != " + (*variables)["default_value"];
-  (*variables)["other_has_property_check"] = "other." +
-    (*variables)["property_name"] + " != " + (*variables)["default_value"];
+
+  // Fixed: Let proto3 support optional
+  //(*variables)["has_property_check"] =
+  //  (*variables)["property_name"] + " != " + (*variables)["default_value"];
+  //(*variables)["other_has_property_check"] = "other." +
+  //  (*variables)["property_name"] + " != " + (*variables)["default_value"];
+  (*variables)["has_property_check"] = "has_" + name() + "()";
+  (*variables)["other_has_property_check"] = "other.has_" + name() + "()";
 }
 
 void FieldGeneratorBase::SetCommonOneofFieldVariables(

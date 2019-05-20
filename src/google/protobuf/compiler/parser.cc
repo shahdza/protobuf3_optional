@@ -825,13 +825,13 @@ bool Parser::ParseMessageField(FieldDescriptorProto* field,
     FieldDescriptorProto::Label label;
     if (ParseLabel(&label, containing_file)) {
       field->set_label(label);
-      if (label == FieldDescriptorProto::LABEL_OPTIONAL &&
-          syntax_identifier_ == "proto3") {
-        AddError(
-            "Explicit 'optional' labels are disallowed in the Proto3 syntax. "
-            "To define 'optional' fields in Proto3, simply remove the "
-            "'optional' label, as fields are 'optional' by default.");
-      }
+      //if (label == FieldDescriptorProto::LABEL_OPTIONAL &&
+      //    syntax_identifier_ == "proto3") {
+      //  AddError(
+      //      "Explicit 'optional' labels are disallowed in the Proto3 syntax. "
+      //      "To define 'optional' fields in Proto3, simply remove the "
+      //      "'optional' label, as fields are 'optional' by default.");
+      //}
     }
   }
 

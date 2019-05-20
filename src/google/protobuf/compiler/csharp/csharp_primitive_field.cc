@@ -55,8 +55,11 @@ PrimitiveFieldGenerator::PrimitiveFieldGenerator(
   is_value_type = descriptor->type() != FieldDescriptor::TYPE_STRING
       && descriptor->type() != FieldDescriptor::TYPE_BYTES;
   if (!is_value_type) {
-    variables_["has_property_check"] = variables_["property_name"] + ".Length != 0";
-    variables_["other_has_property_check"] = "other." + variables_["property_name"] + ".Length != 0";
+	// Fixed: Let proto3 support optional
+	//variables_["has_property_check"] = variables_["property_name"] + ".Length != 0";
+	//variables_["other_has_property_check"] = "other." + variables_["property_name"] + ".Length != 0";
+	variables_["has_property_check"] = "has_" + name() + "()";
+	variables_["other_has_property_check"] = "other.has_" + name() + "()";
   }
 }
 
@@ -77,14 +80,18 @@ void PrimitiveFieldGenerator::GenerateMembers(io::Printer* printer) {
     "$access_level$ $type_name$ $property_name$ {\n"
     "  get { return $name$_; }\n"
     "  set {\n");
+  // Fixed: Let proto3 support optional
   if (is_value_type) {
-    printer->Print(
-      variables_,
-      "    $name$_ = value;\n");
-  } else {
-    printer->Print(
-      variables_,
-      "    $name$_ = pb::ProtoPreconditions.CheckNotNull(value, \"value\");\n");
+	  printer->Print(
+		  variables_,
+		  "    set_has_$name$();\n"
+		  "    $name$_ = value;\n");
+  }
+  else {
+	  printer->Print(
+		  variables_,
+		  "    set_has_$name$();\n"
+		  "    $name$_ = pb::ProtoPreconditions.CheckNotNull(value, \"value\");\n");
   }
   printer->Print(
     "  }\n"

@@ -50,8 +50,10 @@ namespace csharp {
 WrapperFieldGenerator::WrapperFieldGenerator(const FieldDescriptor* descriptor,
                                        int fieldOrdinal, const Options *options)
     : FieldGeneratorBase(descriptor, fieldOrdinal, options) {
-  variables_["has_property_check"] = name() + "_ != null";
-  variables_["has_not_property_check"] = name() + "_ == null";
+	// Fixed: Let proto3 support optional
+	//variables_["has_property_check"] = name() + "_ != null";
+	variables_["has_property_check"] = "has_" + name() + "()";;
+	variables_["has_not_property_check"] = name() + "_ == null";
   const FieldDescriptor* wrapped_field = descriptor->message_type()->field(0);
   is_value_type = wrapped_field->type() != FieldDescriptor::TYPE_STRING &&
       wrapped_field->type() != FieldDescriptor::TYPE_BYTES;
@@ -74,11 +76,13 @@ void WrapperFieldGenerator::GenerateMembers(io::Printer* printer) {
     "private $type_name$ $name$_;\n");
   WritePropertyDocComment(printer, descriptor_);
   AddPublicMemberAttributes(printer);
+  // Fixed: Let proto3 support optional
   printer->Print(
     variables_,
     "$access_level$ $type_name$ $property_name$ {\n"
     "  get { return $name$_; }\n"
     "  set {\n"
+	"    set_has_$name$();\n"
     "    $name$_ = value;\n"
     "  }\n"
     "}\n");
