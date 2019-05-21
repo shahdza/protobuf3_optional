@@ -347,7 +347,8 @@ bool HasRequiredFields(const Descriptor* descriptor);
 
 // Whether a .proto file supports field presence test for non-message types.
 inline bool SupportFieldPresence(const FileDescriptor* descriptor) {
-  return descriptor->syntax() != FileDescriptor::SYNTAX_PROTO3;
+	return true;
+  //return descriptor->syntax() != FileDescriptor::SYNTAX_PROTO3;
 }
 
 // Whether generate classes expose public PARSER instances.
@@ -360,7 +361,8 @@ inline bool ExposePublicParser(const FileDescriptor* descriptor) {
 // but in the message and can be queried using additional getters that return
 // ints.
 inline bool SupportUnknownEnumValue(const FileDescriptor* descriptor) {
-  return descriptor->syntax() == FileDescriptor::SYNTAX_PROTO3;
+	return false;
+  //return descriptor->syntax() == FileDescriptor::SYNTAX_PROTO3;
 }
 
 // Check whether a mesasge has repeated fields.
