@@ -262,7 +262,8 @@ FieldOptions::CType EffectiveStringCType(const FieldDescriptor* field);
 string UnderscoresToCamelCase(const string& input, bool cap_next_letter);
 
 inline bool HasFieldPresence(const FileDescriptor* file) {
-  return file->syntax() != FileDescriptor::SYNTAX_PROTO3;
+	return true;
+	//return file->syntax() != FileDescriptor::SYNTAX_PROTO3;
 }
 
 // Returns true if 'enum' semantics are such that unknown values are preserved
