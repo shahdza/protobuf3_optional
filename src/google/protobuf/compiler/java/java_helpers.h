@@ -361,8 +361,7 @@ inline bool ExposePublicParser(const FileDescriptor* descriptor) {
 // but in the message and can be queried using additional getters that return
 // ints.
 inline bool SupportUnknownEnumValue(const FileDescriptor* descriptor) {
-	return false;
-  //return descriptor->syntax() == FileDescriptor::SYNTAX_PROTO3;
+  return descriptor->syntax() == FileDescriptor::SYNTAX_PROTO3;
 }
 
 // Check whether a mesasge has repeated fields.
