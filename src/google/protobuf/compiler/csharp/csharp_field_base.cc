@@ -45,6 +45,7 @@
 #include <google/protobuf/compiler/csharp/csharp_field_base.h>
 #include <google/protobuf/compiler/csharp/csharp_helpers.h>
 #include <google/protobuf/compiler/csharp/csharp_names.h>
+#include <google/protobuf/compiler/csharp/csharp_options.h>
 
 namespace google {
 namespace protobuf {
@@ -85,12 +86,19 @@ void FieldGeneratorBase::SetCommonFieldVariables(
   (*variables)["number"] = number();
 
   // Fixed: Let proto3 support optional
-  //(*variables)["has_property_check"] =
-  //  (*variables)["property_name"] + " != " + (*variables)["default_value"];
-  //(*variables)["other_has_property_check"] = "other." +
-  //  (*variables)["property_name"] + " != " + (*variables)["default_value"];
-  (*variables)["has_property_check"] = "has_" + name() + "()";
-  (*variables)["other_has_property_check"] = "other.has_" + name() + "()";
+  // [add by qianribin] Ê¹ÓÃhasbit
+  if (options()->disable_hasbit)
+  {
+	  (*variables)["has_property_check"] =
+	    (*variables)["property_name"] + " != " + (*variables)["default_value"];
+	  (*variables)["other_has_property_check"] = "other." +
+	    (*variables)["property_name"] + " != " + (*variables)["default_value"];
+  }
+  else
+  {
+	  (*variables)["has_property_check"] = "has_" + name() + "()";
+	  (*variables)["other_has_property_check"] = "other.has_" + name() + "()";
+  }
 }
 
 void FieldGeneratorBase::SetCommonOneofFieldVariables(

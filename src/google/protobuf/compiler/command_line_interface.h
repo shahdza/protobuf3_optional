@@ -350,6 +350,9 @@ class LIBPROTOC_EXPORT CommandLineInterface {
   // PATH (or other OS-specific search strategy) is searched.
   std::map<string, string> plugins_;
 
+  // [add by qianruibin] ²»Éú³Éhasbit
+  bool disable_hasbit_;
+
   // Stuff parsed from command line.
   enum Mode {
     MODE_COMPILE,  // Normal mode:  parse .proto files and compile them.

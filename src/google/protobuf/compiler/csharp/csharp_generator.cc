@@ -81,7 +81,12 @@ bool Generator::Generate(
       cli_options.base_namespace_specified = true;
     } else if (options[i].first == "internal_access") {
       cli_options.internal_access = true;
-    } else {
+    } 
+	else if (options[i].first == "disable_hasbit") {
+		// [add by qianruibin] 暂时仅C#不导出hasbit
+		cli_options.disable_hasbit = true;
+	}
+	else {
       *error = "Unknown generator option: " + options[i].first;
       return false;
     }

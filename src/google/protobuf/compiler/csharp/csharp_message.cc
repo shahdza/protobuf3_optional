@@ -48,6 +48,8 @@
 #include <google/protobuf/compiler/csharp/csharp_helpers.h>
 #include <google/protobuf/compiler/csharp/csharp_message.h>
 #include <google/protobuf/compiler/csharp/csharp_names.h>
+#include <google/protobuf/compiler/csharp/csharp_options.h>
+
 
 namespace google {
 namespace protobuf {
@@ -160,24 +162,28 @@ void MessageGenerator::Generate(io::Printer* printer) {
 	// Fixed: Let proto3 support optional
 	// bool has_xxx();
 	// void set_has_xxx();
-	if (fieldDescriptor->label() != FieldDescriptor::Label::LABEL_REPEATED)
+	// [add by qianruibin] 导出hasbit
+	if (!options()->disable_hasbit)
 	{
-		char hasBitsStr[20];
-		char sortNumStr[20];
-		sprintf(hasBitsStr, "_has_bits_[%d]", sortNum / 32);
-		sprintf(sortNumStr, "0x%08xu", (1u) << (sortNum % 32));
-		WriteGeneratedCodeAttributes(printer);
-		printer->Print(
-			"public bool has_$name$() { return ($_has_bits_$ & $_sort_number_$) > 0; }\n",
-			"name", UnderscoresToCamelCase(GetFieldName(fieldDescriptor), false),
-			"_has_bits_", hasBitsStr,
-			"_sort_number_", sortNumStr);
-		WriteGeneratedCodeAttributes(printer);
-		printer->Print(
-			"private void set_has_$name$() { $_has_bits_$ |= $_sort_number_$; }\n",
-			"name", UnderscoresToCamelCase(GetFieldName(fieldDescriptor), false),
-			"_has_bits_", hasBitsStr,
-			"_sort_number_", sortNumStr);
+		if (fieldDescriptor->label() != FieldDescriptor::Label::LABEL_REPEATED)
+		{
+			char hasBitsStr[20];
+			char sortNumStr[20];
+			sprintf(hasBitsStr, "_has_bits_[%d]", sortNum / 32);
+			sprintf(sortNumStr, "0x%08xu", (1u) << (sortNum % 32));
+			WriteGeneratedCodeAttributes(printer);
+			printer->Print(
+				"public bool has_$name$() { return ($_has_bits_$ & $_sort_number_$) > 0; }\n",
+				"name", UnderscoresToCamelCase(GetFieldName(fieldDescriptor), false),
+				"_has_bits_", hasBitsStr,
+				"_sort_number_", sortNumStr);
+			WriteGeneratedCodeAttributes(printer);
+			printer->Print(
+				"private void set_has_$name$() { $_has_bits_$ |= $_sort_number_$; }\n",
+				"name", UnderscoresToCamelCase(GetFieldName(fieldDescriptor), false),
+				"_has_bits_", hasBitsStr,
+				"_sort_number_", sortNumStr);
+		}
 	}
 
     std::unique_ptr<FieldGeneratorBase> generator(
@@ -188,20 +194,23 @@ void MessageGenerator::Generate(io::Printer* printer) {
 
   // Fixed: Let proto3 support optional
   // Generate _has_bits_
-  int has_bists_size = sortNumVec.size() / 32 + 1;
-  printer->Print("/// <summary>_has_bits_ for properties.</summary>\n");
-  printer->Print(
-	  "private uint[] _has_bits_ = new uint[$has_bists_size$] {",
-	  "has_bists_size", SimpleItoa(has_bists_size));
-  for (int i = 0 ; i < has_bists_size; ++i)
+  // [add by qianruibin] 导出hasbit
+  if (!options()->disable_hasbit)
   {
-	  if (i > 0) printer->Print(",");
-	  printer->Print(" 0");
+	  int has_bists_size = sortNumVec.size() / 32 + 1;
+	  printer->Print("/// <summary>_has_bits_ for properties.</summary>\n");
+	  printer->Print(
+		  "private uint[] _has_bits_ = new uint[$has_bists_size$] {",
+		  "has_bists_size", SimpleItoa(has_bists_size));
+	  for (int i = 0; i < has_bists_size; ++i)
+	  {
+		  if (i > 0) printer->Print(",");
+		  printer->Print(" 0");
+	  }
+	  printer->Print(" };\n");
+	  printer->Print("/// <summary>_has_bits_ for properties.</summary>\n");
+	  printer->Print("//////////////////////////////////////////////////////////////////////////\n\n\n");
   }
-  printer->Print(" };\n");
-  printer->Print("/// <summary>_has_bits_ for properties.</summary>\n");
-  printer->Print("//////////////////////////////////////////////////////////////////////////\n\n\n");
-
 
   // oneof properties
   for (int i = 0; i < descriptor_->oneof_decl_count(); i++) {

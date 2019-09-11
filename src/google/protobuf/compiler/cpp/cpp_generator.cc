@@ -100,7 +100,11 @@ bool CppGenerator::Generate(const FileDescriptor* file,
       file_options.table_driven_parsing = true;
     } else if (options[i].first == "table_driven_serialization") {
       file_options.table_driven_serialization = true;
-    } else {
+    } 
+	else if (options[i].first == "disable_hasbit") {
+		// [add by qianruibin] 暂时仅C#不导出hasbit
+	}
+	else {
       *error = "Unknown generator option: " + options[i].first;
       return false;
     }

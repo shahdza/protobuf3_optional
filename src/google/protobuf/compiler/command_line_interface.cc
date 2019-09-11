@@ -788,7 +788,9 @@ CommandLineInterface::CommandLineInterface()
           kDefaultDirectDependenciesViolationMsg),
       imports_in_descriptor_set_(false),
       source_info_in_descriptor_set_(false),
-      disallow_services_(false) {}
+      disallow_services_(false),
+		disable_hasbit_ (false) // [add by qianruibin] 不生成hasbit
+{}
 CommandLineInterface::~CommandLineInterface() {}
 
 void CommandLineInterface::RegisterGenerator(const string& flag_name,
@@ -1351,7 +1353,8 @@ bool CommandLineInterface::ParseArgument(const char* arg,
       *name == "--include_source_info" ||
       *name == "--version" ||
       *name == "--decode_raw" ||
-      *name == "--print_free_field_numbers") {
+      *name == "--print_free_field_numbers" ||
+	  *name == "--disable_hasbit") {
     // HACK:  These are the only flags that don't take a value.
     //   They probably should not be hard-coded like this but for now it's
     //   not worth doing better.
@@ -1622,7 +1625,13 @@ CommandLineInterface::InterpretArgument(const string& name,
     }
     mode_ = MODE_PRINT;
     print_mode_ = PRINT_FREE_FIELDS;
-  } else {
+  } 
+  // [add by qianruibin] 自己定义的参数, 用于某些协议不导出hasbit，效率和GC问题
+  else if (name == "--disable_hasbit")
+  {
+	disable_hasbit_ = true;
+  }
+  else {
     // Some other flag.  Look it up in the generators list.
     const GeneratorInfo* generator_info =
         FindOrNull(generators_by_flag_name_, name);
@@ -1809,6 +1818,14 @@ bool CommandLineInterface::GenerateOutput(
       }
       parameters.append(generator_parameters_[output_directive.name]);
     }
+	// [add by qianruibin] 不生成hasbit
+	if (disable_hasbit_)
+	{
+		if (!parameters.empty()) {
+			parameters.append(",");
+		}
+		parameters.append("disable_hasbit");
+	}
     if (!output_directive.generator->GenerateAll(
         parsed_files, parameters, generator_context, &error)) {
       // Generator returned an error.

@@ -45,6 +45,8 @@
 #include <google/protobuf/compiler/php/php_generator.h>
 #include <google/protobuf/compiler/ruby/ruby_generator.h>
 #endif  // ! OPENSOURCE_PROTOBUF_CPP_BOOTSTRAP
+#include  <direct.h>  
+#include  <stdio.h>  
 
 int main(int argc, char* argv[]) {
 
@@ -96,5 +98,42 @@ int main(int argc, char* argv[]) {
                         "Generate JavaScript source.");
 #endif  // !OPENSOURCE_PROTOBUF_CPP_BOOTSTRAP
 
-  return cli.Run(argc, argv);
+  // --csharp_out=. math.proto
+  bool debug = false;
+  if (debug)
+  {
+	  {
+		  int test_argc = 4;
+		  char* test_argv[] = {
+			"Debug\\protoc.exe",
+			"--csharp_out=.\\Debug\\output",
+			"Debug\\proto\\FrameMessage.proto",
+			"--disable_hasbit",
+		  };
+		  cli.Run(test_argc, test_argv);
+	  }
+	  {
+		  int test_argc = 3;
+		  char* test_argv[] = {
+			"Debug\\protoc.exe",
+			"--csharp_out=.\\Debug\\output",
+			"Debug\\proto\\HotfixMessage.proto",
+		  };
+		  cli.Run(test_argc, test_argv);
+	  }
+	  {
+		  int test_argc = 3;
+		  char* test_argv[] = {
+			"Debug\\protoc.exe",
+			"--csharp_out=.\\Debug\\output",
+			"Debug\\proto\\OuterMessage.proto",
+		  };
+		  cli.Run(test_argc, test_argv);
+	  }
+	  return 0;
+  }
+  else
+  {
+	  return cli.Run(argc, argv);
+  }
 }

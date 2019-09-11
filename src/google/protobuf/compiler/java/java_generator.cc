@@ -82,7 +82,11 @@ bool JavaGenerator::Generate(const FileDescriptor* file,
       file_options.annotate_code = true;
     } else if (options[i].first == "annotation_list_file") {
       file_options.annotation_list_file = options[i].second;
-    } else {
+    } 
+	else if (options[i].first == "disable_hasbit") {
+		// [add by qianruibin] 暂时仅C#不导出hasbit
+	}
+	else {
       *error = "Unknown generator option: " + options[i].first;
       return false;
     }

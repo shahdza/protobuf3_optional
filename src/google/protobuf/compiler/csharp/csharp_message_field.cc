@@ -53,8 +53,15 @@ MessageFieldGenerator::MessageFieldGenerator(const FieldDescriptor* descriptor,
                                              const Options *options)
     : FieldGeneratorBase(descriptor, fieldOrdinal, options) {
 	// Fixed: Let proto3 support optional
-	//variables_["has_property_check"] = name() + "_ != null";
-	variables_["has_property_check"] = "has_" + name() + "()";
+	// [add by qianribin] Ê¹ÓÃhasbit
+	if (options->disable_hasbit)
+	{
+		variables_["has_property_check"] = name() + "_ != null";
+	}
+	else
+	{
+		variables_["has_property_check"] = "has_" + name() + "()";
+	}
 	variables_["has_not_property_check"] = name() + "_ == null";
 }
 
@@ -69,15 +76,30 @@ void MessageFieldGenerator::GenerateMembers(io::Printer* printer) {
   WritePropertyDocComment(printer, descriptor_);
   AddPublicMemberAttributes(printer);
   // Fixed: Let proto3 support optional
-  printer->Print(
-    variables_,
-    "$access_level$ $type_name$ $property_name$ {\n"
-    "  get { return $name$_; }\n"
-    "  set {\n"
-	"    set_has_$name$();\n"
-    "    $name$_ = value;\n"
-    "  }\n"
-    "}\n");
+  // [add by qianruibin] ½ûÓÃhasbit
+  if (options()->disable_hasbit)
+  {
+	  printer->Print(
+		  variables_,
+		  "$access_level$ $type_name$ $property_name$ {\n"
+		  "  get { return $name$_; }\n"
+		  "  set {\n"
+		  "    $name$_ = value;\n"
+		  "  }\n"
+		  "}\n");
+  }
+  else
+  {
+	  printer->Print(
+		  variables_,
+		  "$access_level$ $type_name$ $property_name$ {\n"
+		  "  get { return $name$_; }\n"
+		  "  set {\n"
+		  "    set_has_$name$();\n"
+		  "    $name$_ = value;\n"
+		  "  }\n"
+		  "}\n");
+  }
 }
 
 void MessageFieldGenerator::GenerateMergingCode(io::Printer* printer) {

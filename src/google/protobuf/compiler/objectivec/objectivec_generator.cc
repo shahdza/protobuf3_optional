@@ -121,7 +121,11 @@ bool ObjectiveCGenerator::GenerateAll(const std::vector<const FileDescriptor*>& 
       // with generate_for_named_framework, or the relative path to it's include
       // path otherwise.
       generation_options.named_framework_to_proto_path_mappings_path = options[i].second;
-    } else {
+    } 
+	else if (options[i].first == "disable_hasbit") {
+		// [add by qianruibin] 暂时仅C#不导出hasbit
+	}
+	else {
       *error = "error: Unknown generator option: " + options[i].first;
       return false;
     }

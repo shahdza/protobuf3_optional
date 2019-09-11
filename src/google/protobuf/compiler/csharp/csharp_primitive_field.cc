@@ -56,10 +56,17 @@ PrimitiveFieldGenerator::PrimitiveFieldGenerator(
       && descriptor->type() != FieldDescriptor::TYPE_BYTES;
   if (!is_value_type) {
 	// Fixed: Let proto3 support optional
-	//variables_["has_property_check"] = variables_["property_name"] + ".Length != 0";
-	//variables_["other_has_property_check"] = "other." + variables_["property_name"] + ".Length != 0";
-	variables_["has_property_check"] = "has_" + name() + "()";
-	variables_["other_has_property_check"] = "other.has_" + name() + "()";
+	// [add by qianribin] 使用hasbit
+	  if (options->disable_hasbit)
+	  {
+		  variables_["has_property_check"] = variables_["property_name"] + ".Length != 0";
+		  variables_["other_has_property_check"] = "other." + variables_["property_name"] + ".Length != 0";
+	  }
+	  else
+	  {
+		  variables_["has_property_check"] = "has_" + name() + "()";
+		  variables_["other_has_property_check"] = "other.has_" + name() + "()";
+	  }
   }
 }
 
@@ -81,17 +88,34 @@ void PrimitiveFieldGenerator::GenerateMembers(io::Printer* printer) {
     "  get { return $name$_; }\n"
     "  set {\n");
   // Fixed: Let proto3 support optional
-  if (is_value_type) {
-	  printer->Print(
-		  variables_,
-		  "    set_has_$name$();\n"
-		  "    $name$_ = value;\n");
+  // [add by qianruibin] 不生成hasbit
+  if (options()->disable_hasbit)
+  {
+	  if (is_value_type) {
+		  printer->Print(
+			  variables_,
+			  "    $name$_ = value;\n");
+	  }
+	  else {
+		  printer->Print(
+			  variables_,
+			  "    $name$_ = pb::ProtoPreconditions.CheckNotNull(value, \"value\");\n");
+	  }
   }
-  else {
-	  printer->Print(
-		  variables_,
-		  "    set_has_$name$();\n"
-		  "    $name$_ = pb::ProtoPreconditions.CheckNotNull(value, \"value\");\n");
+  else
+  {
+	  if (is_value_type) {
+		  printer->Print(
+			  variables_,
+			  "    set_has_$name$();\n"
+			  "    $name$_ = value;\n");
+	  }
+	  else {
+		  printer->Print(
+			  variables_,
+			  "    set_has_$name$();\n"
+			  "    $name$_ = pb::ProtoPreconditions.CheckNotNull(value, \"value\");\n");
+	  }
   }
   printer->Print(
     "  }\n"
