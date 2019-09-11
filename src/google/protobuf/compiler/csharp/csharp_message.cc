@@ -118,10 +118,20 @@ void MessageGenerator::Generate(io::Printer* printer) {
   printer->Indent();
 
   // All static fields and properties
-  printer->Print(
-      vars,
-      "private static readonly pb::MessageParser<$class_name$> _parser = new pb::MessageParser<$class_name$>(() => new $class_name$());\n");
-
+  // [add by qianruibin] 协议对象池
+  bool bUseMessagePool = true;
+  if (bUseMessagePool)
+  {
+	  printer->Print(
+		  vars,
+		  "private static readonly pb::MessageParser<$class_name$> _parser = new pb::MessageParser<$class_name$>(() => ($class_name$)pb::MessagePool.Instance.Fetch(typeof($class_name$)));\n");
+  }
+  else
+  {
+	  printer->Print(
+		  vars,
+		  "private static readonly pb::MessageParser<$class_name$> _parser = new pb::MessageParser<$class_name$>(() => new $class_name$());\n");
+  }
   WriteGeneratedCodeAttributes(printer);
 
   printer->Print(
@@ -361,6 +371,23 @@ void MessageGenerator::GenerateFreezingCode(io::Printer* printer) {
 }
 
 void MessageGenerator::GenerateFrameworkMethods(io::Printer* printer) {
+	// [add by qianruibin] 添加ResetData接口
+	std::map<string, string> vars;
+	vars["class_name"] = class_name();
+
+	WriteGeneratedCodeAttributes(printer);
+	printer->Print("public void ResetData() {\n");
+	printer->Indent();
+
+	for (int i = 0; i < fields_by_number().size(); i++) {
+		const FieldDescriptor* field = fields_by_number()[i];
+		std::unique_ptr<FieldGeneratorBase> generator(
+			CreateFieldGeneratorInternal(field));
+		generator->GenerateResetValueCode(printer);
+	}
+
+	printer->Outdent();
+	printer->Print("}\n\n"); // method
 }
 
 void MessageGenerator::GenerateMessageSerializationMethods(io::Printer* printer) {
@@ -407,6 +434,10 @@ void MessageGenerator::GenerateMergingMethods(io::Printer* printer) {
   WriteGeneratedCodeAttributes(printer);
   printer->Print("public void MergeFrom(pb::CodedInputStream input) {\n");
   printer->Indent();
+
+  // [add by qianruibin] 协议对象池初始化数据
+  printer->Print("ResetData();\n");
+
   printer->Print(
     "uint tag;\n"
     "while ((tag = input.ReadTag()) != 0) {\n"

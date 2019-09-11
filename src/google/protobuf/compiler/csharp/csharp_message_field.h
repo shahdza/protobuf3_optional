@@ -56,6 +56,8 @@ class MessageFieldGenerator : public FieldGeneratorBase {
   virtual void GenerateParsingCode(io::Printer* printer);
   virtual void GenerateSerializationCode(io::Printer* printer);
   virtual void GenerateSerializedSizeCode(io::Printer* printer);
+  // [add by qianruibin] 初始化数据
+  virtual void GenerateResetValueCode(io::Printer* printer);
 
   virtual void WriteHash(io::Printer* printer);
   virtual void WriteEquals(io::Printer* printer);

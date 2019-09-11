@@ -144,6 +144,11 @@ void WrapperFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
     "  size += _single_$name$_codec.CalculateSizeWithTag($property_name$);\n"
     "}\n");
 }
+void WrapperFieldGenerator::GenerateResetValueCode(io::Printer* printer) {
+	printer->Print(
+		variables_,
+		"WrapperFieldGenerator??????\n");
+}
 
 void WrapperFieldGenerator::WriteHash(io::Printer* printer) {
   const char *text = "if ($has_property_check$) hash ^= $property_name$.GetHashCode();\n";

@@ -110,6 +110,12 @@ void RepeatedMessageFieldGenerator::GenerateSerializedSizeCode(io::Printer* prin
     variables_,
     "size += $name$_.CalculateSize(_repeated_$name$_codec);\n");
 }
+void RepeatedMessageFieldGenerator::GenerateResetValueCode(io::Printer* printer) {
+	printer->Print(
+		variables_,
+		"for (int i = 0, size_i = $name$_.Count; i < size_i; i++) { pb::MessagePool.Instance.Recycle($name$_[i]); }\n"
+		"$name$_.Clear();\n");
+}
 
 void RepeatedMessageFieldGenerator::WriteHash(io::Printer* printer) {
   printer->Print(

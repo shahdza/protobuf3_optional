@@ -57,6 +57,8 @@ class FieldGeneratorBase : public SourceGeneratorBase {
   virtual void GenerateParsingCode(io::Printer* printer) = 0;
   virtual void GenerateSerializationCode(io::Printer* printer) = 0;
   virtual void GenerateSerializedSizeCode(io::Printer* printer) = 0;
+  // [add by qianruibin] 初始化数据
+  virtual void GenerateResetValueCode(io::Printer* printer) = 0;
 
   virtual void WriteHash(io::Printer* printer) = 0;
   virtual void WriteEquals(io::Printer* printer) = 0;

@@ -95,6 +95,11 @@ void RepeatedEnumFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer
     variables_,
     "size += $name$_.CalculateSize(_repeated_$name$_codec);\n");
 }
+void RepeatedEnumFieldGenerator::GenerateResetValueCode(io::Printer* printer) {
+	printer->Print(
+		variables_,
+		"$name$_.Clear();\n");
+}
 
 void RepeatedEnumFieldGenerator::WriteHash(io::Printer* printer) {
   printer->Print(

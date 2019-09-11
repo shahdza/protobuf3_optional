@@ -139,6 +139,11 @@ void MessageFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
     "  size += $tag_size$ + pb::CodedOutputStream.ComputeMessageSize($property_name$);\n"
     "}\n");
 }
+void MessageFieldGenerator::GenerateResetValueCode(io::Printer* printer) {
+	printer->Print(
+		variables_,
+		"if ($name$_ != null) pb::MessagePool.Instance.Recycle($name$_); $name$_ = null;\n");
+}
 
 void MessageFieldGenerator::WriteHash(io::Printer* printer) {
   printer->Print(

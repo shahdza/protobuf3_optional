@@ -180,6 +180,57 @@ void PrimitiveFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
   printer->Print("}\n");
 }
 
+// [add by qianruibin] 初始化数据
+void PrimitiveFieldGenerator::GenerateResetValueCode(io::Printer* printer) {
+	switch (descriptor_->type())
+	{
+	case FieldDescriptor::TYPE_INT32:
+	case FieldDescriptor::TYPE_INT64:
+	case FieldDescriptor::TYPE_UINT32:
+	case FieldDescriptor::TYPE_UINT64:
+	case FieldDescriptor::TYPE_SINT32:
+	case FieldDescriptor::TYPE_SINT64:
+	case FieldDescriptor::TYPE_FIXED32:
+	case FieldDescriptor::TYPE_FIXED64:
+	case FieldDescriptor::TYPE_SFIXED32:
+	case FieldDescriptor::TYPE_SFIXED64:
+	case FieldDescriptor::TYPE_FLOAT:
+	case FieldDescriptor::TYPE_DOUBLE:
+	case FieldDescriptor::TYPE_ENUM:
+		printer->Print(
+			variables_,
+			"$name$_ = 0;\n");
+		break;
+	case FieldDescriptor::TYPE_BOOL:
+		printer->Print(
+			variables_,
+			"$name$_ = false;\n");
+		break;
+	case FieldDescriptor::TYPE_STRING:
+		printer->Print(
+			variables_,
+			"$name$_ = \"\";\n");
+		break;
+	case FieldDescriptor::TYPE_BYTES:
+		printer->Print(
+			variables_,
+			"$name$_ = pb::ByteString.Empty;\n");
+		break;
+	case FieldDescriptor::TYPE_GROUP:
+		printer->Print(
+			variables_,
+			"$name$_ = TYPE_GROUP??????;\n");
+		break;
+	case FieldDescriptor::TYPE_MESSAGE:
+	{
+		printer->Print(
+			variables_,
+			"$name$_ = TYPE_MESSAGE??????;\n");
+	}
+		break;
+	}
+}
+
 void PrimitiveFieldGenerator::WriteHash(io::Printer* printer) {
   const char *text = "if ($has_property_check$) hash ^= $property_name$.GetHashCode();\n";
   if (descriptor_->type() == FieldDescriptor::TYPE_FLOAT) {
