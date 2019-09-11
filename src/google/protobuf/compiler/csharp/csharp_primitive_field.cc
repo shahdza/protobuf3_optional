@@ -133,9 +133,22 @@ void PrimitiveFieldGenerator::GenerateMergingCode(io::Printer* printer) {
 void PrimitiveFieldGenerator::GenerateParsingCode(io::Printer* printer) {
   // Note: invoke the property setter rather than writing straight to the field,
   // so that we can normalize "null to empty" for strings and bytes.
-  printer->Print(
-    variables_,
-    "$property_name$ = input.Read$capitalized_type_name$();\n");
+  //printer->Print(
+  //  variables_,
+  //  "$property_name$ = input.Read$capitalized_type_name$();\n");
+	// [add by qianruibin] 直接变量赋值，不使用setXXX接口，减少属性器函数访问消耗
+	if (options()->disable_hasbit)
+	{
+		printer->Print(
+			variables_,
+			"$name$_ = input.Read$capitalized_type_name$();\n");
+	}
+	else
+	{
+		printer->Print(
+			variables_,
+			"$property_name$ = input.Read$capitalized_type_name$();\n");
+	}
 }
 
 void PrimitiveFieldGenerator::GenerateSerializationCode(io::Printer* printer) {

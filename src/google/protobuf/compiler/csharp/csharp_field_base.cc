@@ -89,10 +89,14 @@ void FieldGeneratorBase::SetCommonFieldVariables(
   // [add by qianribin] Ê¹ÓÃhasbit
   if (options()->disable_hasbit)
   {
+	  //(*variables)["has_property_check"] =
+	  //  (*variables)["property_name"] + " != " + (*variables)["default_value"];
+	  //(*variables)["other_has_property_check"] = "other." +
+	  //  (*variables)["property_name"] + " != " + (*variables)["default_value"];
 	  (*variables)["has_property_check"] =
-	    (*variables)["property_name"] + " != " + (*variables)["default_value"];
+		(*variables)["name"] + "_ != " + (*variables)["default_value"];
 	  (*variables)["other_has_property_check"] = "other." +
-	    (*variables)["property_name"] + " != " + (*variables)["default_value"];
+	    (*variables)["name"] + "_ != " + (*variables)["default_value"];
   }
   else
   {
