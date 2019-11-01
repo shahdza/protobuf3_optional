@@ -108,6 +108,7 @@ void MessageFieldGenerator::GenerateMergingCode(io::Printer* printer) {
     "if (other.$has_property_check$) {\n"
     "  if ($has_not_property_check$) {\n"
     "    $name$_ = new $type_name$();\n"
+	"    set_has_$name$();\n"
     "  }\n"
     "  $property_name$.MergeFrom(other.$property_name$);\n"
     "}\n");
@@ -118,6 +119,7 @@ void MessageFieldGenerator::GenerateParsingCode(io::Printer* printer) {
     variables_,
     "if ($has_not_property_check$) {\n"
     "  $name$_ = new $type_name$();\n"
+	"  set_has_$name$();\n"
     "}\n"
     // TODO(jonskeet): Do we really need merging behaviour like this?
     "input.ReadMessage($name$_);\n"); // No need to support TYPE_GROUP...
