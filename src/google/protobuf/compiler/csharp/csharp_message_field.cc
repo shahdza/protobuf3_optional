@@ -103,26 +103,53 @@ void MessageFieldGenerator::GenerateMembers(io::Printer* printer) {
 }
 
 void MessageFieldGenerator::GenerateMergingCode(io::Printer* printer) {
-  printer->Print(
-    variables_,
-    "if (other.$has_property_check$) {\n"
-    "  if ($has_not_property_check$) {\n"
-    "    $name$_ = new $type_name$();\n"
-	"    set_has_$name$();\n"
-    "  }\n"
-    "  $property_name$.MergeFrom(other.$property_name$);\n"
-    "}\n");
+	if (options()->disable_hasbit)
+	{
+		printer->Print(
+			variables_,
+			"if (other.$has_property_check$) {\n"
+			"  if ($has_not_property_check$) {\n"
+			"    $name$_ = new $type_name$();\n"
+			"  }\n"
+			"  $property_name$.MergeFrom(other.$property_name$);\n"
+			"}\n");
+	}
+	else
+	{
+		printer->Print(
+			variables_,
+			"if (other.$has_property_check$) {\n"
+			"  if ($has_not_property_check$) {\n"
+			"    $name$_ = new $type_name$();\n"
+			"    set_has_$name$();\n"
+			"  }\n"
+			"  $property_name$.MergeFrom(other.$property_name$);\n"
+			"}\n");
+	}
 }
 
 void MessageFieldGenerator::GenerateParsingCode(io::Printer* printer) {
-  printer->Print(
-    variables_,
-    "if ($has_not_property_check$) {\n"
-    "  $name$_ = new $type_name$();\n"
-	"  set_has_$name$();\n"
-    "}\n"
-    // TODO(jonskeet): Do we really need merging behaviour like this?
-    "input.ReadMessage($name$_);\n"); // No need to support TYPE_GROUP...
+	if (options()->disable_hasbit)
+	{
+		printer->Print(
+			variables_,
+			"if ($has_not_property_check$) {\n"
+			"  $name$_ = new $type_name$();\n"
+			"}\n"
+			// TODO(jonskeet): Do we really need merging behaviour like this?
+			"input.ReadMessage($name$_);\n"); // No need to support TYPE_GROUP...
+	}
+	else
+	{
+		printer->Print(
+			variables_,
+			"if ($has_not_property_check$) {\n"
+			"  $name$_ = new $type_name$();\n"
+			"  set_has_$name$();\n"
+			"}\n"
+			// TODO(jonskeet): Do we really need merging behaviour like this?
+			"input.ReadMessage($name$_);\n"); // No need to support TYPE_GROUP...
+	}
 }
 
 void MessageFieldGenerator::GenerateSerializationCode(io::Printer* printer) {
